@@ -1,0 +1,9 @@
+work_start.sh
+.venv/
+db.sqlite3
+app/__pycache__/
+tfidf_text_processor/__pycache__/
+tfidf_text_processor/migrations
+.env
+text.txt
+text2.txt

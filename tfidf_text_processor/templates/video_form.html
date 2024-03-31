@@ -1,0 +1,32 @@
+{% extends 'base.html' %}
+
+{% block content %}
+<form method="post" action="{% url 'main' %}">
+	{% csrf_token %}
+	<table>
+		<tr>
+			<td><label >Text to animate </label></td>
+			<td><input id="text" type="text" name="text" value="{{ text }}"></td>
+		</tr>
+		<tr>
+			<td><label >fps </label></td>
+			<td><input id="fps" type="text" name="fps" value="{{ fps }}"></td>
+		</tr>
+		<tr>
+			<td><label >size x </label></td>
+			<td><input id="size_x" type="text" name="size_x" value="{{ size_x }}"></td>
+		</tr>
+		<tr>
+			<td><label >size y </label></td>
+			<td><input id="size_y" type="text" name="size_y" value="{{ size_y }}"></td>
+		</tr>
+		<tr>
+			<td><label >length </label></td>
+			<td><input id="length" type="text" name="length" value="{{ length }}"></td>
+		</tr>
+	</table>
+	<input type="submit" value="Generate">
+	<input type="hidden" name="next" value="{{ next }}">
+</form>
+
+{% endblock %}
