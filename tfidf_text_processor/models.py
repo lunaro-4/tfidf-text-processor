@@ -1,3 +1,10 @@
 from django.db import models
 
-# Create your models here.
+from app.settings import MEDIA_URL
+
+
+
+class  InputTextFile(models.Model):
+    file = models.FileField(upload_to='.')
+    date = models.DateField(auto_now_add=True)
+
