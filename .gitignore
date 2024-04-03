@@ -7,3 +7,4 @@ tfidf_text_processor/migrations
 .env
 text.txt
 text2.txt
+media/*

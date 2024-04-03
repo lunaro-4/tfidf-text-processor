@@ -1,5 +1,6 @@
 #!/usr/bin/env python
 
+from numpy import log10
 import pandas as pd
 
 file_name = "text.txt"
@@ -67,7 +68,9 @@ def main(file_array : list):
     words_global_idf = dict()
 
     for word in words_file_count.keys():
-        words_global_idf[word] = docks/words_file_count[word]
+        words_global_idf[word] = log10(docks/words_file_count[word])
+        # words_global_idf[word] = docks/words_file_count[word]
+    print(words_global_idf)
 
     for file in words_multydict.keys(): 
         words_local_idf= dict()
@@ -75,7 +78,7 @@ def main(file_array : list):
            words_local_idf[word] = words_global_idf[word] 
         words_multydict[file] = {'words': words_multydict[file]['words'], 'tf': words_multydict[file]['tf'], 'idf': words_local_idf} 
 
-    print(create_df(words_multydict[file_array[1]]).head(20))
+    print(create_df(words_multydict[file_array[0]]).head(20))
 
 
 
@@ -85,3 +88,10 @@ def main(file_array : list):
 
 if __name__ == "__main__":
     main([file_name,'text2.txt'])
+
+
+
+
+
+
+
