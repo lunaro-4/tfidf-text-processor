@@ -8,6 +8,9 @@
 	{% csrf_token %}
 		<p>{{ form.non_field_errors }}</p>
 		<p>{{ form.file.label_tag }} {{ form.file.help_text }}</p>
+		<p>Please provide library_id</p>
+		<p>{{ form.library_id }}</p>
+		<!-- <input type="text" name="library_input" value=""> -->
 		<p>
 			{{ form.file.errors }}
 			{{ form.file }}
@@ -15,15 +18,23 @@
 	<input type="submit" value="Submit">
 </form>
 
+<br>
+<br>
+
+
+<p>Enter library_id to load</p>
+<input type="text" name="library_id_show" value="{{ library_id_show }}">
+
+<a href="{% url 'home' %}?library_id={{library_id_show}}"><button type="">Submit</button></a>
 
 <table table style="width:30%">
 	<thead>
 			<td>word</td>
-		{% for column in outp.columns %}
+			<td>count</td>
+			<td>tf</td>
+			<td>idf</td>
 
-			<td>{{ column }}</td>
 
-			{% endfor %}
 	</thead>
 	
 	<tbody>

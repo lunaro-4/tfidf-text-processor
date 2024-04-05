@@ -7,5 +7,4 @@ from app.settings import MEDIA_URL
 class  InputTextFile(models.Model):
     file = models.FileField(upload_to='.')
     date = models.DateField(auto_now_add=True)
-    # library_id = models.ForeignKey()
-
+    library_id = models.CharField(max_length = 20, default= '0')
