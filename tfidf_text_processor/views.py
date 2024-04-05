@@ -23,28 +23,40 @@ def show_home(request):
 
 
 
+@cache_page(60 * 15)
+@csrf_protect
+def file_handling(request, context):
+    uploaded_file = request.FILES.get('file')
+    new_file = InputTextFile(file = uploaded_file) 
+    new_file.file
+    new_file.save()
+    f = new_file.file.open('r')
+    context['form']= UploadFileForm
+    print("New file uploaded!", new_file.file)
+    outp = main([f])
+    context['outp'] = outp
+    return render(request, 'home.html', context=context)
 
 
 @cache_page(60 * 15)
 @csrf_protect
-def main_view(request):
+def library_handling(request, context):
+    return render(request, 'home.html', context=context)
+
+
+
+@cache_page(60 * 15)
+@csrf_protect
+def main_view(request, library_id = None):
     context = {}
+    context['library_id_show'] = 123
     context['form']= UploadFileForm
+    context['library'] = {}
     if request.method == 'POST' and request.FILES:
-        uploaded_file = request.FILES.get('file')
-        new_file = InputTextFile(file = uploaded_file) 
-        new_file.file
-        new_file.save()
-        f = new_file.file.open('r')
-        context['form']= UploadFileForm
-        print("New file uploaded!", new_file.file)
-        outp = main([f])
-        context['outp'] = outp
-        return render(request, 'home.html', context=context)
-    # elif request.method == "GET":
+        return file_handling(request, context)
+    elif request.method == 'POST' and 'library_choice' in request.POST:
+        return library_handling(request, context)
     else:
         return render(request, 'home.html', context=context)
-    # else:
-    #     raise Exception()
 
 
