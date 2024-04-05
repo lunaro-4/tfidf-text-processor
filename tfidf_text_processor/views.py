@@ -7,9 +7,14 @@ from django.urls import reverse, reverse_lazy
 from django.views.decorators.cache import cache_page
 from django.shortcuts import render
 from django.views.generic.edit import CreateView
+
+from tfidf_text_processor.logic import main
 # from django.core.urlsol
 from .forms import UploadFileForm
 from .models import InputTextFile 
+
+
+
 
 @cache_page(60 * 15)
 @csrf_protect
@@ -22,27 +27,6 @@ def show_home(request):
 
 @cache_page(60 * 15)
 @csrf_protect
-# def main_view(request):
-def examp_func(request):
-    context = {}
-    if request.method == "POST":
-        print(request.FILES)
-        form = UploadFileForm(data=request.POST, files=request.FILES)
-        # if form.is_valid():
-        print('valid')
-        new_file = InputTextFile(file = request.FILES['textfile']) 
-        new_file.save()
-            # return HttpResponse(reverse('tfidf_text_processor.views.main_view'))
-    else:
-        form =  UploadFileForm()
-    file_list = InputTextFile.objects.all()
-    return render(request,
-                            "home.html",
-                              {'file_list': file_list,"form": form},
-                              )
-
-@cache_page(60 * 15)
-@csrf_protect
 def main_view(request):
     context = {}
     context['form']= UploadFileForm
@@ -51,9 +35,11 @@ def main_view(request):
         new_file = InputTextFile(file = uploaded_file) 
         new_file.file
         new_file.save()
-
+        f = new_file.file.open('r')
         context['form']= UploadFileForm
         print("New file uploaded!", new_file.file)
+        outp = main([f])
+        context['outp'] = outp
         return render(request, 'home.html', context=context)
     # elif request.method == "GET":
     else:
