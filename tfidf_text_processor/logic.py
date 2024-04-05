@@ -5,8 +5,7 @@ import pandas as pd
 
 file_name = "text.txt"
 
-def read_words(file_name):
-    with open(file_name, 'rt') as file:
+def read_words(file):
         words = file.read().replace("\n"," ").replace(",","").replace(".","").replace(";","").replace("--", ' ').replace('\"', '').lower()
         return filter(lambda a: a != '', words.split(" "))
 
@@ -52,11 +51,12 @@ def count_files_for_word(words, words_file_count):
     return words_file_count
 
 
+
 def main(file_array : list):
     docks = 0
     words_file_count = dict()
     words_multydict = dict()
-
+    
     for file in file_array:
         docks += 1
         words = read_words(file)
@@ -70,7 +70,6 @@ def main(file_array : list):
     for word in words_file_count.keys():
         words_global_idf[word] = log10(docks/words_file_count[word])
         # words_global_idf[word] = docks/words_file_count[word]
-    print(words_global_idf)
 
     for file in words_multydict.keys(): 
         words_local_idf= dict()
@@ -78,16 +77,23 @@ def main(file_array : list):
            words_local_idf[word] = words_global_idf[word] 
         words_multydict[file] = {'words': words_multydict[file]['words'], 'tf': words_multydict[file]['tf'], 'idf': words_local_idf} 
 
-    print(create_df(words_multydict[file_array[0]]).head(20))
+    return create_df(words_multydict[file_array[0]])
 
 
+
+def file_handle(file_array):
+    new_array = []
+    for file in file_array:
+        f = open(file, 'r')
+        new_array.append(f)
+    main(new_array)
 
 
 
 
 
 if __name__ == "__main__":
-    main([file_name,'text2.txt'])
+    print(main([file_name,'text2.txt']).head(20))
 
 
 
