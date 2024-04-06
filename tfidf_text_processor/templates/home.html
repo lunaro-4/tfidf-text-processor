@@ -26,11 +26,11 @@
 	{% csrf_token %}
 	<p>Enter library_id to load</p>
 	<input type="text" name="library_id_show" value="{{ library_id_show }}">
-	<input type="submit" name="library_choice" value="{% url 'home' %}">
+	<input type="submit" name="library_choice" value="Submit">
 
 </form>
 
-
+<p> {{file_list}}</p>
 
 <table table style="width:30%">
 	<thead>

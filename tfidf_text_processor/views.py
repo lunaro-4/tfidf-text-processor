@@ -40,7 +40,11 @@ def file_handling(request, context):
 
 @cache_page(60 * 15)
 @csrf_protect
-def library_handling(request, context):
+def library_handling(request, context, library_id):
+    file_list = InputTextFile.objects.filter(library_id=library_id)
+    # file_list = InputTextFile.objects.all()
+    # file_list = library_id
+    context['file_list'] = file_list
     return render(request, 'home.html', context=context)
 
 
@@ -55,7 +59,7 @@ def main_view(request, library_id = None):
     if request.method == 'POST' and request.FILES:
         return file_handling(request, context)
     elif request.method == 'POST' and 'library_choice' in request.POST:
-        return library_handling(request, context)
+        return library_handling(request, context, request.POST.get('library_id_show'))
     else:
         return render(request, 'home.html', context=context)
 
