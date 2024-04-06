@@ -1,3 +1,4 @@
+import json
 from logging import raiseExceptions
 from django.core.files.storage import FileSystemStorage
 from django.contrib.admin.sites import csrf_protect
@@ -7,6 +8,7 @@ from django.urls import reverse, reverse_lazy
 from django.views.decorators.cache import cache_page
 from django.shortcuts import render
 from django.views.generic.edit import CreateView
+from django.core.serializers import serialize
 
 from tfidf_text_processor.logic import main
 # from django.core.urlsol
@@ -23,6 +25,17 @@ def show_home(request):
     return render(request=request, template_name='home.html')
 
 
+@cache_page(60 * 15)
+@csrf_protect
+def file_handling_w_list(request, context, file_name):
+    # f = InputTextFile.objects
+
+    # outp = main([f])
+    # context['outp'] = outp
+    
+
+    return render(request, 'home.html', context=context)
+
 
 @cache_page(60 * 15)
 @csrf_protect
@@ -33,21 +46,35 @@ def file_handling(request, context):
     new_file.save()
     f = new_file.file.open('r')
     context['form']= UploadFileForm
-    print("New file uploaded!", new_file.file)
     outp = main([f])
     context['outp'] = outp
+    print("New file uploaded!", new_file.file)
     return render(request, 'home.html', context=context)
 
-
+def serializer(query):
+    jsoned = serialize("json", query)
+    jsoned = json.loads(jsoned)
+    return jsoned
+    
 @cache_page(60 * 15)
 @csrf_protect
 def library_handling(request, context, library_id):
+    file_list = InputTextFile.objects.filter(library_id=library_id).only('file', 'id')
+    file_list = serializer(file_list)
+    for file in file_list:
+        file['fields']['file'] = file['fields']['file'].replace(')', '').replace("'",'').replace('(','').replace(',','')
+    context['file_list'] = file_list
+    request.session['file_list'] = file_list
+    return render(request, 'home.html', context=context)
+
+@cache_page(60 * 15)
+@csrf_protect
+def library_handling_1(request, context, library_id):
     file_list = InputTextFile.objects.filter(library_id=library_id).values_list('file')
     file_list = [ str(file).replace(')', '').replace("'",'').replace('(','').replace(',','') for file in file_list]
     context['file_list'] = file_list
     request.session['file_list'] = file_list
     return render(request, 'home.html', context=context)
-
 
 
 @cache_page(60 * 15)
@@ -63,7 +90,7 @@ def main_view(request, file_list = None):
     elif request.method == 'POST' and 'library_choice' in request.POST:
         return library_handling(request, context, request.POST.get('library_id_show'))
     elif request.method == 'GET':
-        pass
+        return file_handling_w_list(request, context, request.GET.get('file'))
     return render(request, 'home.html', context=context)
 
 

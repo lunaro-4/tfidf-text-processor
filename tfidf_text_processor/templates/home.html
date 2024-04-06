@@ -31,9 +31,10 @@
 </form>
 
 
-{% for value in file_list %}
+{% for file in file_list %}
 
-<button type="button" name = "{{value}}"><a href="{% url 'home' %}?text={{value}}">{{value}}</a></button>
+<button type="button" name = "{{file.filelds.file}}"><a href="{% url 'home' %}?file={{file.pk}}">{{file.fields.file}}</a></button>
+		
 
 {% endfor %}
 
