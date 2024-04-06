@@ -14,6 +14,7 @@ from .forms import UploadFileForm
 from .models import InputTextFile 
 
 
+LIST_MEM = []
 
 
 @cache_page(60 * 15)
@@ -41,18 +42,19 @@ def file_handling(request, context):
 @cache_page(60 * 15)
 @csrf_protect
 def library_handling(request, context, library_id):
-    file_list = InputTextFile.objects.filter(library_id=library_id)
-    # file_list = InputTextFile.objects.all()
-    # file_list = library_id
+    file_list = InputTextFile.objects.filter(library_id=library_id).values_list('file')
+    file_list = [ str(file).replace(')', '').replace("'",'').replace('(','').replace(',','') for file in file_list]
     context['file_list'] = file_list
+    request.session['file_list'] = file_list
     return render(request, 'home.html', context=context)
 
 
 
 @cache_page(60 * 15)
 @csrf_protect
-def main_view(request, library_id = None):
+def main_view(request, file_list = None):
     context = {}
+    context['file_list'] =request.session.get('file_list', '')
     context['library_id_show'] = 123
     context['form']= UploadFileForm
     context['library'] = {}
@@ -60,7 +62,8 @@ def main_view(request, library_id = None):
         return file_handling(request, context)
     elif request.method == 'POST' and 'library_choice' in request.POST:
         return library_handling(request, context, request.POST.get('library_id_show'))
-    else:
-        return render(request, 'home.html', context=context)
+    elif request.method == 'GET':
+        pass
+    return render(request, 'home.html', context=context)
 
 

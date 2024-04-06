@@ -30,7 +30,12 @@
 
 </form>
 
-<p> {{file_list}}</p>
+
+{% for value in file_list %}
+
+<button type="button" name = "{{value}}"><a href="{% url 'home' %}?text={{value}}">{{value}}</a></button>
+
+{% endfor %}
 
 <table table style="width:30%">
 	<thead>
