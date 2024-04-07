@@ -27,11 +27,10 @@ def show_home(request):
 
 @cache_page(60 * 15)
 @csrf_protect
-def file_handling_w_list(request, context, file_name):
-    # f = InputTextFile.objects
-
-    # outp = main([f])
-    # context['outp'] = outp
+def file_handling_w_list(request, context, file_id):
+    f = InputTextFile.objects.get(pk = file_id).file.open('r')
+    outp = main([f] )
+    context['outp'] = outp
     
 
     return render(request, 'home.html', context=context)
@@ -41,8 +40,8 @@ def file_handling_w_list(request, context, file_name):
 @csrf_protect
 def file_handling(request, context):
     uploaded_file = request.FILES.get('file')
-    new_file = InputTextFile(file = uploaded_file) 
-    new_file.file
+    library_id = request.POST.get('library_id')
+    new_file = InputTextFile(file = uploaded_file, library_id = library_id)
     new_file.save()
     f = new_file.file.open('r')
     context['form']= UploadFileForm
