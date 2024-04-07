@@ -51,15 +51,15 @@ def count_files_for_word(words, words_file_count):
     return words_file_count
 
 
-
-def main(file_array : list):
+def main(file_array : dict, file_id : int = 0):
+    file_id = int( file_id)
     docks = 0
     words_file_count = dict()
     words_multydict = dict()
     
-    for file in file_array:
+    for file in file_array.keys():
         docks += 1
-        words = read_words(file)
+        words = read_words(file_array[file])
         words_count = count_words(words)
         words_tf = words_get_freq(words_count)
         words_file_count = count_files_for_word(words_count.keys(), words_file_count)
@@ -76,17 +76,16 @@ def main(file_array : list):
         for word in words_multydict[file]['words'].keys():
            words_local_idf[word] = words_global_idf[word] 
         words_multydict[file] = {'words': words_multydict[file]['words'], 'tf': words_multydict[file]['tf'], 'idf': words_local_idf} 
-
-    return create_df(words_multydict[file_array[0]])
+    return create_df(words_multydict[file_id])
 
 
 
 def file_handle(file_array):
-    new_array = []
-    for file in file_array:
-        f = open(file, 'r')
-        new_array.append(f)
-    main(new_array)
+    new_dict = {}
+    for file in range(len(file_array)):
+        f = open(file_array(file), 'r')
+        new_dict[file] = f
+    main(new_dict)
 
 
 
