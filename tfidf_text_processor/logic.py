@@ -72,7 +72,7 @@ def main(file_array : dict, file_id : int = 0):
     words_global_idf = dict()
 
     for word in words_file_count.keys():
-        words_global_idf[word] = log10(docks/words_file_count[word])
+        words_global_idf[word] = 1+log10(docks/words_file_count[word])
 
     for file in words_multydict.keys(): 
         words_local_idf= dict()
