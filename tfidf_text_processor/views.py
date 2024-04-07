@@ -1,5 +1,6 @@
 import json
 from logging import raiseExceptions
+from django.core import cache
 from django.core.files.storage import FileSystemStorage
 from django.contrib.admin.sites import csrf_protect
 from django.http import HttpResponse
@@ -28,12 +29,13 @@ def show_home(request):
 @cache_page(60 * 15)
 @csrf_protect
 def files_handling(request, context, file_id):
-    file_dict = request.session['file_list']
+    file_dict = context['file_list']
     file_map = {}
     for file in file_dict:
         f = open(MEDIA_ROOT+'/'+file['fields']['file'], 'r')
         file_map[file['pk']] = f
-    # print(file_map)
+    if len(file_map) == 0:
+        return render(request, 'home.html', context=context)
     outp = main(file_map, file_id)
     context['outp'] = outp
     
@@ -48,6 +50,7 @@ def upload_handling(request, context):
     library_id = request.POST.get('library_id')
     new_file = InputTextFile(file = uploaded_file, library_id = library_id)
     new_file.save()
+    request.session.modified = True
     f = new_file.file.open('r')
     context['form']= UploadFileForm
     # outp = main([f])
@@ -68,7 +71,9 @@ def library_handling(request, context, library_id):
     for file in file_list:
         file['fields']['file'] = file['fields']['file'].replace(')', '').replace("'",'').replace('(','').replace(',','').replace('!','').replace('?','')
     context['file_list'] = file_list
+    cache.cache.clear()
     request.session['file_list'] = file_list
+    request.session.modified = True
     return render(request, 'home.html', context=context)
 
 
@@ -78,7 +83,7 @@ def library_handling(request, context, library_id):
 def main_view(request, file_list = None):
     context = {}
     context['file_list'] =request.session.get('file_list', '')
-    context['library_id_show'] = 123
+    print(request.session.get('file_list'))
     context['form']= UploadFileForm
     context['library'] = {}
     if request.method == 'POST' and request.FILES:
