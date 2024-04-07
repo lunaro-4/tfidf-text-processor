@@ -27,13 +27,13 @@ def show_home(request):
 
 @cache_page(60 * 15)
 @csrf_protect
-def file_handling_w_list(request, context, file_id):
+def files_handling(request, context, file_id):
     file_dict = request.session['file_list']
     file_map = {}
     for file in file_dict:
         f = open(MEDIA_ROOT+'/'+file['fields']['file'], 'r')
         file_map[file['pk']] = f
-    print(file_map)
+    # print(file_map)
     outp = main(file_map, file_id)
     context['outp'] = outp
     
@@ -43,7 +43,7 @@ def file_handling_w_list(request, context, file_id):
 
 @cache_page(60 * 15)
 @csrf_protect
-def file_handling(request, context):
+def upload_handling(request, context):
     uploaded_file = request.FILES.get('file')
     library_id = request.POST.get('library_id')
     new_file = InputTextFile(file = uploaded_file, library_id = library_id)
@@ -66,7 +66,7 @@ def library_handling(request, context, library_id):
     file_list = InputTextFile.objects.filter(library_id=library_id).only('file', 'id')
     file_list = serializer(file_list)
     for file in file_list:
-        file['fields']['file'] = file['fields']['file'].replace(')', '').replace("'",'').replace('(','').replace(',','')
+        file['fields']['file'] = file['fields']['file'].replace(')', '').replace("'",'').replace('(','').replace(',','').replace('!','').replace('?','')
     context['file_list'] = file_list
     request.session['file_list'] = file_list
     return render(request, 'home.html', context=context)
@@ -82,11 +82,11 @@ def main_view(request, file_list = None):
     context['form']= UploadFileForm
     context['library'] = {}
     if request.method == 'POST' and request.FILES:
-        return file_handling(request, context)
+        return upload_handling(request, context)
     elif request.method == 'POST' and 'library_choice' in request.POST:
         return library_handling(request, context, request.POST.get('library_id_show'))
-    elif request.method == 'GET' and request.GET.get('file') != '':
-        return file_handling_w_list(request, context, request.GET.get('file'))
+    elif request.method == 'GET' and request.GET.get('file')!= ''  and request.GET.get('file') != None :
+        return files_handling(request, context, request.GET.get('file'))
     return render(request, 'home.html', context=context)
 
 

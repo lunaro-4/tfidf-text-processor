@@ -8,13 +8,11 @@
 	{% csrf_token %}
 		<p>{{ form.non_field_errors }}</p>
 		<p>{{ form.file.label_tag }} {{ form.file.help_text }}</p>
-		<p>Please provide library_id</p>
-		<p>{{ form.library_id }}</p>
-		<!-- <input type="text" name="library_input" value=""> -->
 		<p>
 			{{ form.file.errors }}
 			{{ form.file }}
 		</p>
+		<p>{{ form.library_id }}</p>
 	<input type="submit" value="Submit">
 </form>
 
@@ -25,7 +23,7 @@
 <form method="post" enctype="multipart/form-data">
 	{% csrf_token %}
 	<p>Enter library_id to load</p>
-	<input type="text" name="library_id_show" value="{{ library_id_show }}">
+	<input type="text" name="library_id_show" placeholder="Library ID">
 	<input type="submit" name="library_choice" value="Submit">
 
 </form>

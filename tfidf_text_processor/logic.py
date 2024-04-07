@@ -6,7 +6,7 @@ import pandas as pd
 file_name = "text.txt"
 
 def read_words(file):
-        words = file.read().replace("\n"," ").replace(",","").replace(".","").replace(";","").replace("--", ' ').replace('\"', '').lower()
+        words = file.read().replace("\n"," ").replace(",","").replace(".","").replace(";","").replace("--", ' ').replace('\"', '').replace('!','').replace('?','').lower()
         return filter(lambda a: a != '', words.split(" "))
 
 
@@ -52,7 +52,11 @@ def count_files_for_word(words, words_file_count):
 
 
 def main(file_array : dict, file_id : int = 0):
-    file_id = int( file_id)
+    try :
+        file_array.items()
+        file_id = int( file_id)
+    except:
+        return pd.DataFrame() 
     docks = 0
     words_file_count = dict()
     words_multydict = dict()
@@ -69,7 +73,6 @@ def main(file_array : dict, file_id : int = 0):
 
     for word in words_file_count.keys():
         words_global_idf[word] = log10(docks/words_file_count[word])
-        # words_global_idf[word] = docks/words_file_count[word]
 
     for file in words_multydict.keys(): 
         words_local_idf= dict()
@@ -85,14 +88,14 @@ def file_handle(file_array):
     for file in range(len(file_array)):
         f = open(file_array(file), 'r')
         new_dict[file] = f
-    main(new_dict)
+    return main(new_dict)
 
 
 
 
 
 if __name__ == "__main__":
-    print(main([file_name,'text2.txt']).head(20))
+    print(file_handle([file_name,'text2.txt']).head(20))
 
 
 
